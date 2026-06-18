@@ -1,0 +1,13 @@
+{
+    "entrez_email":"INSERT YOUR EMAIL HERE",
+    "entrez_api_key":"INSERT YOUR API KEY HERE",
+    "num_of_articles":1,
+    "max_summary_length":250,
+    "min_summary_length":100,
+    "output_directory":"./output",
+    "queries":[
+        {"keyword":"lung Cancer",
+        "output_file":"lung_cancer.csv"
+        }
+    ]
+}

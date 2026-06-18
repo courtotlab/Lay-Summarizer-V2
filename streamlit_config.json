@@ -1,0 +1,9 @@
+{
+    "entrez_email": "INSERT YOUR EMAIL HERE",
+    "entrez_api_key": "INSERT YOUR API KEY HERE",
+    "max_summary_length": 250,
+    "min_summary_length": 100,
+    "output_directory": "./output",
+    "num_of_articles": 1,
+    "pmid_file": "/Users/x2sun/Projects Lab /Lay-Summary-Project/user_pmids_k11r5v15.txt"
+}
