@@ -1,6 +1,6 @@
 {
-    "entrez_email":"osborn.s.xs07@gmail.com",
-    "entrez_api_key":"0140f08c57e308d5a8191207044ef199d008",
+    "entrez_email":"INSERT_YOUR_EMAIL_HERE",
+    "entrez_api_key":"INSERT_YOUR_API_KEY_HERE",
     "num_of_articles":1,
     "max_summary_length":250,
     "min_summary_length":100,
