@@ -46,7 +46,7 @@ from .metrics import (
     compute_ragas_summarization_score)
 
 from .summarize import (
-    gpt4_summarize_async,
+    abstract_citation_summarize_many_article_async,
     citation_summarize_many_articles_async,
     set_async_client as set_summary_async_client,
 )
@@ -213,7 +213,7 @@ async def run_pipeline_async(config_path="./config.json"):
         article_metadata=article_metadata,
         source_tables=citation_source_tables,
         max_length=max_summary_length,
-        prompt_file_path=Path(__file__).parent.parent.parent / "summarizer_prompt",
+        prompt_file_path=Path(__file__).resolve().parents[2] / "full_summarizer_prompt",
         concurrency=5,
         model_name="gpt-5.1"
     )
@@ -245,13 +245,20 @@ async def run_pipeline_async(config_path="./config.json"):
     titles_from_abstracts, abstracts = fetch_abstracts(pmids, fetch)
     _ = titles_from_abstracts
 
-    abstract_summaries = await gpt4_summarize_async(
+    abstract_summaries = await abstract_citation_summarize_many_article_async(
         abstracts,
-        max_length=max_summary_length
+        max_length=max_summary_length,
+        prompt_file_path=Path(__file__).resolve().parents[2] / "full_summarizer_prompt",
+        concurrency=15
     )
 
     for pmid, summary in abstract_summaries.items():
         abstract_summaries[pmid] = clean_summary_text(summary)
+
+    abstract_summaries_without_citations = {}
+     
+    for pmid, summary in abstract_summaries.items():
+        abstract_summaries_without_citations[pmid] = clean_summary_text(remove_citation_parentheses(summary))
 
     # ------------------------------------------------------------
     # 8. PubMed links
@@ -266,11 +273,11 @@ async def run_pipeline_async(config_path="./config.json"):
     # ------------------------------------------------------------
     similarity_scores = {
         pmid: evaluate_similarity(
-            abstract_summaries[pmid],
+            abstract_summaries_without_citations[pmid],
             full_text_summaries_without_citations[pmid]
         )
-        for pmid in abstract_summaries
-        if abstract_summaries[pmid] != "No text available"
+        for pmid in abstract_summaries_without_citations
+        if abstract_summaries_without_citations[pmid] != "No text available"
         and full_text_summaries_without_citations.get(pmid)
         and full_text_summaries_without_citations[pmid] != "No text available"
     }
@@ -279,8 +286,8 @@ async def run_pipeline_async(config_path="./config.json"):
     # 10. Readability scores
     # ------------------------------------------------------------
     abstract_readability = {
-        pmid: compute_readability(abstract_summaries[pmid])
-        for pmid in abstract_summaries
+        pmid: compute_readability(abstract_summaries_without_citations[pmid])
+        for pmid in abstract_summaries_without_citations
     }
 
     full_text_readability = {
@@ -311,7 +318,7 @@ async def run_pipeline_async(config_path="./config.json"):
     print("------------------------------")
 
     abstract_ragas_faithfulness = compute_ragas_faithfulness(
-        abstract_summaries,
+        abstract_summaries_without_citations,
         abstracts,
         ragas_prompt
     )
@@ -323,7 +330,7 @@ async def run_pipeline_async(config_path="./config.json"):
     )
 
     abstract_ragas_summarization = await compute_ragas_summarization_score(
-    abstract_summaries,
+    abstract_summaries_without_citations,
     abstracts
     )
 
@@ -373,7 +380,7 @@ async def run_pipeline_async(config_path="./config.json"):
     )
 
     Abstract_Summary = pd.DataFrame(
-        list(abstract_summaries.items()),
+        list(abstract_summaries_without_citations.items()),
         columns=["pmid", "Abstract_Summary"]
     )
 
@@ -420,9 +427,9 @@ async def run_pipeline_async(config_path="./config.json"):
     Abstract_SMOG_Index = pd.DataFrame([
         {
             "pmid": pmid,
-            "Abstract_SMOG_Index": calculate_smog_index(abstract_summaries[pmid])
+            "Abstract_SMOG_Index": calculate_smog_index(abstract_summaries_without_citations[pmid])
         }
-        for pmid in abstract_summaries
+        for pmid in abstract_summaries_without_citations
     ])
 
     Full_Text_SMOG_Index = pd.DataFrame([
@@ -436,9 +443,9 @@ async def run_pipeline_async(config_path="./config.json"):
     Abstract_Gunning_Fog_Score = pd.DataFrame([
         {
             "pmid": pmid,
-            "Abstract_Gunning_Fog_Score": calculate_gunning_fog_score(abstract_summaries[pmid])
+            "Abstract_Gunning_Fog_Score": calculate_gunning_fog_score(abstract_summaries_without_citations[pmid])
         }
-        for pmid in abstract_summaries
+        for pmid in abstract_summaries_without_citations
     ])
 
     Full_Text_Gunning_Fog_Score = pd.DataFrame([

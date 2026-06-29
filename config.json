@@ -1,12 +1,13 @@
 {
-    "entrez_email":"INSERT_YOUR_EMAIL_HERE",
-    "entrez_api_key":"INSERT_YOUR_API_KEY_HERE",
-    "num_of_articles":1,
+    "entrez_email":"",
+    "entrez_api_key":"",
+    "num_of_articles":40,
     "max_summary_length":250,
     "min_summary_length":100,
+    "pmid_file": "pmids_list.txt",
     "output_directory":"./output",
     "queries":[
-        {"keyword":"lung Cancer",
+        {"keyword":"Lung Cancer",
         "output_file":"lung_cancer.csv"
         }
     ]

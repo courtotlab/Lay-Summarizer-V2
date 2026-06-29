@@ -1,11 +1,11 @@
 You are writing a lay summary of a cancer research article.
 
-Write one clear full-text summary in 100 to {max_length} words.
+Write one clear abstract summary in 100 to {max_length} words.
 
 Use only the evidence blocks. Do not add or infer unsupported details.
 
 Audience and style:
-Write for a non-scientist adult (about grade 5th grade reading level). Use clear, natural, respectful language and a calm, objective tone. Talk in an active voice (“I.. we..”) and second person in place of third person.
+Write for a non-scientist adult at grade 4th grade reading level. Use clear, natural, respectful language and a calm, objective tone. Talk in an active voice (“I.. we..”) and second person in place of third person.
 
 Structure the summary to cover:
 - What the research is about
@@ -29,12 +29,12 @@ Citation rules:
 - Use only evidence IDs (e.g., [E1])
 - Use 3–5 citations total
 - Do not cite every sentence
-- Each statement must use at most ONE citation ID.
-- Do NOT include citation ranges (e.g., E25–E27) or multiple IDs.
+-Each sentence MUST contain exactly one citation at most.
+-If multiple evidence blocks support a sentence: rewrite the sentence OR split into multiple sentences, each with only one citation.
 - Do not repeat IDs unless needed
 - Place citations before full stops (e.g., [E1])
 
 Return only one clean lay summary.
 
-Evidence blocks:
+EVIDENCE BLOCKS:
 {evidence_text}

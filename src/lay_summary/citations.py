@@ -13,7 +13,7 @@ Important:
 
 import re
 import time
-
+from spacy.lang.en import English
 import pandas as pd
 from Bio import Entrez
 from bs4 import BeautifulSoup
@@ -224,48 +224,7 @@ def citation_extract_evidence_table_for_one_pmid(pmid, fetcher):
     return title, pmcid_text, source_table
 
 
-def citation_choose_rows_for_prompt(source_table, max_rows=45):
-    """
-    Choose a manageable number of evidence paragraphs for GPT.
-
-    Copied from the notebook.
-    """
-    if source_table is None or source_table.empty:
-        return pd.DataFrame()
-
-    if len(source_table) <= max_rows:
-        return source_table.copy()
-
-    selected_parts = []
-
-    section_quotas = {
-        "Abstract": 2,
-        "Introduction": 5,
-        "Methods": 6,
-        "Results": 12,
-        "Discussion": 7,
-        "Conclusion": 4,
-        "Body": 18,
-    }
-
-    for section, quota in section_quotas.items(): #keep only the row that has the section selected
-        section_rows = source_table[source_table["section"] == section]
-
-        if not section_rows.empty: # Keep only certain number of row according to the quotas
-            selected_parts.append(section_rows.head(quota))
-
-    if selected_parts:
-        selected_table = pd.concat(selected_parts)
-    else:
-        selected_table = source_table.head(max_rows) # cut off the rows to reinforce the max_rows limit (rows are cut from the tail)
-
-    selected_table = selected_table.drop_duplicates(subset=["evidence_id"])
-    selected_table = selected_table.head(max_rows)
-
-    return selected_table.copy()
-
-
-def citation_make_evidence_blocks_for_prompt(source_table, max_chars_per_block=900):
+def citation_make_evidence_blocks_for_prompt(source_table):
     #Convert evidence rows into GPT-readable evidence blocks.
 
     if source_table is None or source_table.empty:
@@ -275,9 +234,6 @@ def citation_make_evidence_blocks_for_prompt(source_table, max_chars_per_block=9
 
     for _, row in source_table.iterrows():
         text = citation_clean_text(row["text"])
-
-        if len(text) > max_chars_per_block:
-            text = text[:max_chars_per_block].rstrip() + "..."
 
         block = (
             f"[{row['evidence_id']}]\n"
@@ -291,95 +247,12 @@ def citation_make_evidence_blocks_for_prompt(source_table, max_chars_per_block=9
     return "\n\n".join(blocks)
 
 
-def citation_choose_best_evidence_id(evidence_ids, source_table):
-
-    #Patched version from the notebook patch cell.
-
-    #If GPT gives multiple evidence IDs for one idea, choose ONE best ID.
-    
-    if not evidence_ids:
-        return None
-
-    if source_table is None or source_table.empty:
-        return evidence_ids[0]
-
-    evidence_to_section = {}
-
-    for _, row in source_table.iterrows():
-        evidence_to_section[row["evidence_id"]] = row["section"]
-
-    section_priority = {
-        "Results": 1,
-        "Conclusion": 2,
-        "Methods": 3,
-        "Discussion": 4,
-        "Introduction": 5,
-        "Body": 6,
-        "Abstract": 9,
-    }
-
-    best_id = evidence_ids[0]
-    best_score = 999
-
-    for evidence_id in evidence_ids:
-        section = evidence_to_section.get(evidence_id, "Body")
-        score = section_priority.get(section, 8)
-
-        if score < best_score: # override the best_id if this evidence_id is from a more important section
-            best_score = score
-            best_id = evidence_id
-
-    return best_id
-
-
-def citation_collapse_adjacent_readable_citations(text):
-    #Collapse citations like: (Abstract, para. 1)(Introduction, para. 4)
-    #into one citation --> (Abstract, para. 1)
-
-    if text is None:
-        return ""
-
-    text = str(text)
-
-    #match any text with strucutre like [intro, para.1][intro, para.2] (adjacent readable citations)
-    adjacent_pattern = r"(\([^)]*para\.\s*\d+[^)]*\))(?:\s*(\([^)]*para\.\s*\d+[^)]*\)))+"
-
-    def choose_one_readable_citation(match):
-        citation_cluster = match.group(0)
-        citations = re.findall(r"\([^)]*para\.\s*\d+[^)]*\)", citation_cluster)
-
-        if not citations:
-            return citation_cluster
-
-        non_abstract_citations = []
-
-        for citation in citations:
-            if "Abstract" not in citation:
-                non_abstract_citations.append(citation)
-
-        if non_abstract_citations:
-            return non_abstract_citations[-1]
-
-        return citations[-1]
-
-    previous_text = None
-
-    while previous_text != text:
-        previous_text = text
-        text = re.sub(adjacent_pattern, choose_one_readable_citation, text)
-
-    return text
-
-
 def citation_convert_evidence_ids_to_readable_citations(summary_text, source_table):
     """
     Patched version from the notebook patch cell.
 
     Convert GPT's internal evidence IDs into readable citations:
     - [E4] becomes (Results, para. 2)
-    - [E4, E5] becomes only ONE best citation
-    - [E4][E5] becomes only ONE best citation
-    - [E4] [E5] becomes only ONE best citation
     """
     if summary_text is None:
         return "", [], []
@@ -398,9 +271,9 @@ def citation_convert_evidence_ids_to_readable_citations(summary_text, source_tab
     #match any text with structure like [E4, E5] or [E4][E5] (clusters of evidence ids)
     citation_cluster_pattern = r"(?:\[(?:\s*E\d+\s*,?\s*)+\]\s*)+"
 
-    def replace_cluster(match): # helper function to replace eg[E4, E5] or [E4][E5] into one best readable citation
+    def replace_ids_with_citations(match): 
         cluster_text = match.group(0)
-        evidence_ids = re.findall(r"E\d+", cluster_text) # make cluster ids into a list of elements
+        evidence_ids = re.findall(r"E\d+", cluster_text) 
 
         if not evidence_ids:
             return ""
@@ -419,17 +292,17 @@ def citation_convert_evidence_ids_to_readable_citations(summary_text, source_tab
 
         if not valid_ids:
             return ""
-
-        best_id = citation_choose_best_evidence_id(valid_ids, source_table)
-        best_label = evidence_to_label[best_id]
-
-        return f"({best_label})"
-
-    readable_summary = re.sub(citation_cluster_pattern, replace_cluster, str(summary_text)) # replace all cluster citation into best single citation
-
-    readable_summary = re.sub(r"\s+([.,;:])", r"\1", readable_summary)#replace all cluster citation into best single citation
-    readable_summary = re.sub(r"\s+", " ", readable_summary).strip() #replace multiple white spaces into one and trim
-    readable_summary = citation_collapse_adjacent_readable_citations(readable_summary) #collapse adjacent citations into one citation
+        
+        #coonvert each evidence id into citation label
+        readable_citations = []
+        for evidence_id in valid_ids: 
+            readable_citations.append(f"({evidence_to_label[evidence_id]})")
+        return "".join(readable_citations)
+    
+    readable_summary = re.sub(citation_cluster_pattern, replace_ids_with_citations, str(summary_text)) # replace evidence ids into readable citations
+    readable_summary = re.sub(r"\s+([.,;:])", r"\1", readable_summary) # remove extra space
+    readable_summary = re.sub(r"\s+", " ", readable_summary).strip() 
+    
 
     used_ids_unique = []
 
@@ -470,3 +343,53 @@ def citation_count_words_without_citations(summary_text):
         return 0
 
     return len(text.split())
+
+
+##Abstract summary helpers
+
+
+def split_sentences(text):
+    nlp = English()
+    nlp.add_pipe("sentencizer")
+    lst = []
+
+    doc = nlp(text)
+    for sentence in doc.sents:
+        lst.append(sentence.text.strip())
+    return lst
+
+
+def abstract_assign_sentence_labels(sentences_list):
+    labeled_sentences = []
+    for i, sentence in enumerate(sentences_list, start=1):
+        evidence_id = f"E{i}"
+        labeled_sentences.append((evidence_id, sentence))
+    return labeled_sentences
+
+
+
+def abstract_make_gpt_readable_text(labeled_sentences):
+    
+    all_blocks = []
+
+    for id, sentence in labeled_sentences:
+        gpt_readable_block = f"[{id}]\nText: {sentence}"
+        all_blocks.append(gpt_readable_block)
+    
+    evidence_text = "\n\n".join(all_blocks)
+    return evidence_text
+
+
+def abstract_build_evidence_table(labeled_sentences):
+    rows = []
+
+    for i, (id, sentence) in enumerate(labeled_sentences, start=1):
+        citation_label = f"Abstract, sentence {i}"
+        rows.append({"evidence_id": id,
+                     "sentence_number": i,
+                     "citation_label": citation_label,
+                     "sentence": sentence})
+    
+    
+    return pd.DataFrame(rows)
+        

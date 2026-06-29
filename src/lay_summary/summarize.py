@@ -11,15 +11,17 @@ Minimal change:
 """
 
 import asyncio
-import pandas as pd
 from lay_summary.citations import (
-    citation_choose_rows_for_prompt,
     citation_count_readable_citations,
     citation_count_words_without_citations,
     citation_make_evidence_blocks_for_prompt,
     citation_convert_evidence_ids_to_readable_citations,
+    split_sentences,
+    abstract_assign_sentence_labels,
+    abstract_build_evidence_table,
+    abstract_make_gpt_readable_text
 )
-
+import pandas as pd
 from openai import AsyncOpenAI
 
 
@@ -46,53 +48,68 @@ def load_summarizer_prompt(text, max_length, prompt_file_path):
     return complete_prompt
 
 
-async def async_summarize(pmid, text, max_length, prompt):
+async def abstract_citation_summarize_one_article_async(pmid, text, max_length, prompt_file_path):
     # Summarize one text.
 
     if async_client is None:
         raise ValueError("async_client is not set. Call set_async_client(openai_api_key) first.")
 
-    if not text or text == "Full text unavailable":
+    if not text or text == "Abstract unavailable":
         return pmid, "No text available"
+    
 
-    prompt = (
-        f"Summarize this article in 250 to {max_length} words for a 2nd grade lay audience using simple words. "
-        f"The tone should be casual. Avoid emotive or negative language such as battle or fight. "
-        f"Keep words under 4 syllables and sentences under 10 words: {text}"
-    )
+    sentences = split_sentences(text)
+    labeled_sentences = abstract_assign_sentence_labels(sentences)
+    evidence_table = abstract_build_evidence_table(labeled_sentences)
+    evidence_text = abstract_make_gpt_readable_text(labeled_sentences)
+
+
+    prompt = load_summarizer_prompt(text=evidence_text, 
+                                    max_length=max_length, 
+                                    prompt_file_path=prompt_file_path
+                                    )
+
 
     try:
         response = await async_client.chat.completions.create(
-            model="gpt-5.1",  # "",
+            model="gpt-5.1",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant that summarizes medical research."},
+                {"role": "system", "content": (
+                    "You are a careful biomedical summarizer. "
+                    "You write accurate biomedical lay summaries at about a 7th to 8th grade reading level with sparse, non-crowded citations."
+                    )
+                },
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.5,
+            temperature=0.2,
         )
-        print(f"Normal summarizer model used: {response.model}")
+        print(f"Abstract summarizer model used: {response.model}")
 
-        content = response.choices[0].message.content.strip()
-        return pmid, content
+        raw_summary = response.choices[0].message.content.strip()
 
     except Exception as e:
         return pmid, f"Error summarizing: {e}"
+    
+    readable_summary, _, _ = citation_convert_evidence_ids_to_readable_citations(raw_summary, evidence_table)
+
+    return pmid, readable_summary
 
 
-async def gpt4_summarize_async(texts, max_length, concurrency=15, prompt_file_path="summarizer_prompt"):
+async def abstract_citation_summarize_many_article_async(texts, max_length,  prompt_file_path, concurrency=15):
 
-    #Summarize many texts asynchronously.
+    #Summarize many abstracts asynchronously.
 
     semaphore = asyncio.Semaphore(concurrency)
 
     async def limited_summary(pmid, text):
         async with semaphore:
-            return await async_summarize(pmid, text, max_length, prompt_file_path)
+            return await abstract_citation_summarize_one_article_async(pmid, text, max_length, prompt_file_path)
             
     tasks = [limited_summary(pmid, text) for pmid, text in texts.items()]
     results = await asyncio.gather(*tasks)
 
     return dict(results)
+
 
 async def citation_summarize_one_article_async(
     pmid,
