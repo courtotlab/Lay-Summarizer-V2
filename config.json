@@ -1,10 +1,9 @@
 {
-    "entrez_email":"",
-    "entrez_api_key":"",
-    "num_of_articles":40,
+    "entrez_email":"osborn.s.xs07@gmail.com",
+    "entrez_api_key":"0140f08c57e308d5a8191207044ef199d008",
+    "num_of_articles":1,
     "max_summary_length":250,
     "min_summary_length":100,
-    "pmid_file": "pmids_list.txt",
     "output_directory":"./output",
     "queries":[
         {"keyword":"Lung Cancer",

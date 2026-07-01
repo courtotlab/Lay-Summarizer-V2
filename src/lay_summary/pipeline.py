@@ -21,6 +21,9 @@ import pandas as pd
 
 from .citations import (
     citation_extract_evidence_table_for_one_pmid,
+    split_sentences,
+    abstract_assign_sentence_labels,
+    abstract_build_evidence_table
 )
 from .config import (
     load_openai_api_key,
@@ -48,7 +51,7 @@ from .metrics import (
 from .summarize import (
     abstract_citation_summarize_many_article_async,
     citation_summarize_many_articles_async,
-    set_async_client as set_summary_async_client,
+    set_async_client as set_summary_async_client
 )
 
 
@@ -237,13 +240,27 @@ async def run_pipeline_async(config_path="./config.json"):
     _ = full_text_summaries
 
     # ------------------------------------------------------------
-    # 7. Generate abstract summaries using original method
+    # 7. Generate cited abstract summaries 
     # ------------------------------------------------------------
     print("\nGenerating abstract summaries...")
     print("-------------------------------")
 
     titles_from_abstracts, abstracts = fetch_abstracts(pmids, fetch)
     _ = titles_from_abstracts
+
+
+    ### Prepare the abstract-specific evidence table dataframe at the end
+    abstract_source_table = {}
+
+    for pmid, abstract_text in abstracts.items():
+        sentences = split_sentences(abstract_text)
+        labeled_sentences = abstract_assign_sentence_labels(sentences)
+        single_abstract_evidence_table = abstract_build_evidence_table(labeled_sentences)
+
+        single_abstract_evidence_table.insert(0, "pmid", pmid)
+        abstract_source_table[pmid] = single_abstract_evidence_table
+
+
 
     abstract_summaries = await abstract_citation_summarize_many_article_async(
         abstracts,
@@ -573,6 +590,8 @@ async def run_pipeline_async(config_path="./config.json"):
     # ------------------------------------------------------------
     # 19. Save citation source table CSV
     # ------------------------------------------------------------
+
+    ### Full-Text Table
     combined_source_tables = []
 
     for pmid, source_table in citation_source_tables.items():
@@ -604,6 +623,16 @@ async def run_pipeline_async(config_path="./config.json"):
 
     else:
         print("\nNo citation source table was saved because no citation evidence was found.")
+
+
+    ### Abstract Table
+
+    abstract_source_df = pd.concat(abstract_source_table.values(), ignore_index=True)
+    abstract_source_table_output_file = f"{base_name}abstract_sentence_source_table{timestamp}.csv" 
+    abstract_source_table_output_path = output_dir / abstract_source_table_output_file
+    abstract_source_df.to_csv( abstract_source_table_output_path, index=False, encoding="utf-8-sig" )
+    print("\nAbstract sentence source table CSV saved to:") 
+    print(abstract_source_table_output_path)
 
     # ------------------------------------------------------------
     # 20. Display final DataFrame
