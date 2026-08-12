@@ -81,7 +81,7 @@ async def abstract_citation_summarize_one_article_async(pmid, text, max_length, 
                 },
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.2,
+            temperature=0.2
         )
         print(f"Abstract summarizer model used: {response.model}")
 
@@ -161,8 +161,7 @@ async def citation_summarize_one_article_async(
                     "content": prompt,
                 },
             ],
-            temperature=0.2,
-            max_completion_tokens=1100,
+            temperature=0.2
         )
         print(f"Citation summarizer model used: {response.model}")
         raw_summary = response.choices[0].message.content.strip()

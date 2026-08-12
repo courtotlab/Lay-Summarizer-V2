@@ -3,11 +3,12 @@
     "entrez_api_key":"0140f08c57e308d5a8191207044ef199d008",
     "num_of_articles":1,
     "max_summary_length":250,
-    "min_summary_length":100,
+    "min_summary_length":150,
     "output_directory":"./output",
+    "pmid_file":"pmids_list.txt",
     "queries":[
-        {"keyword":"Lung Cancer",
-        "output_file":"lung_cancer.csv"
+        {"keyword":"",
+        "output_file":"summarization_test.csv"
         }
     ]
 }

@@ -45,7 +45,8 @@ from .metrics import (
     compute_ragas_faithfulness,
     compute_readability,
     evaluate_similarity,
-    remove_citation_parentheses,
+    remove_full_text_citation_parentheses,
+    remove_abstract_citation_parentheses,
     compute_ragas_summarization_score)
 
 from .summarize import (
@@ -234,7 +235,7 @@ async def run_pipeline_async(config_path="./config.json"):
     full_text_summaries_without_citations = {}
 
     for pmid, summary in full_text_summaries_with_citations.items():
-        full_text_summaries_without_citations[pmid] = clean_summary_text(remove_citation_parentheses(summary))
+        full_text_summaries_without_citations[pmid] = clean_summary_text(remove_full_text_citation_parentheses(summary))
 
     full_text_summaries = full_text_summaries_without_citations
     _ = full_text_summaries
@@ -275,7 +276,7 @@ async def run_pipeline_async(config_path="./config.json"):
     abstract_summaries_without_citations = {}
      
     for pmid, summary in abstract_summaries.items():
-        abstract_summaries_without_citations[pmid] = clean_summary_text(remove_citation_parentheses(summary))
+        abstract_summaries_without_citations[pmid] = clean_summary_text(remove_abstract_citation_parentheses(summary))
 
     # ------------------------------------------------------------
     # 8. PubMed links
@@ -396,9 +397,14 @@ async def run_pipeline_async(config_path="./config.json"):
         columns=["pmid", "FullText_Availability"]
     )
 
-    Abstract_Summary = pd.DataFrame(
+    Abstract_Summary_With_Citations = pd.DataFrame(
+        list(abstract_summaries.items()),
+        columns=["pmid", "Abstract_Summary_With_In_Text_Citations"]
+    )
+
+    Abstract_Summary_Without_Citation = pd.DataFrame(
         list(abstract_summaries_without_citations.items()),
-        columns=["pmid", "Abstract_Summary"]
+        columns=["pmid", "Abstract_Summary_Without_In_Text_Citations"]
     )
 
     Full_Text_Summary_With_Citations = pd.DataFrame(
@@ -408,14 +414,7 @@ async def run_pipeline_async(config_path="./config.json"):
 
     Full_Text_Summary_Without_Citations = pd.DataFrame(
         list(full_text_summaries_without_citations.items()),
-        columns=["pmid", "Full_Text_Summary_Without_Citations"]
-    )
-
-    # Keep original column name for compatibility.
-    # This column is citation-free.
-    Full_Text_Summary = pd.DataFrame(
-        list(full_text_summaries_without_citations.items()),
-        columns=["pmid", "Full_Text_Summary"]
+        columns=["pmid", "Full_Text_Summary_Without_In_Text_Citations"]
     )
 
     Similarity = pd.DataFrame(
@@ -505,7 +504,6 @@ async def run_pipeline_async(config_path="./config.json"):
             "Raw_Summary_With_Evidence_IDs": result["raw_summary_with_evidence_ids"],
             "Number_of_In_Text_Citations_Found": result["citation_count"],
             "Used_Evidence_IDs": ", ".join(result["used_evidence_ids"]),
-            "Invalid_Evidence_IDs": ", ".join(result["invalid_evidence_ids"]),
             "Source_Evidence_Blocks_Sent_To_GPT": result["source_evidence_count"],
             "Total_Source_Paragraphs": len(citation_source_tables[pmid])
         })
@@ -520,10 +518,10 @@ async def run_pipeline_async(config_path="./config.json"):
         Link,
         Abstract,
         FullTextFlag,
-        Abstract_Summary,
+        Abstract_Summary_With_Citations,
+        Abstract_Summary_Without_Citation,
         Full_Text_Summary_With_Citations,
         Full_Text_Summary_Without_Citations,
-        Full_Text_Summary,
         Citation_Metadata,
         Similarity,
         Abstract_Readability,
@@ -625,14 +623,27 @@ async def run_pipeline_async(config_path="./config.json"):
         print("\nNo citation source table was saved because no citation evidence was found.")
 
 
-    ### Abstract Table
+      ### Abstract Table
 
-    abstract_source_df = pd.concat(abstract_source_table.values(), ignore_index=True)
-    abstract_source_table_output_file = f"{base_name}abstract_sentence_source_table{timestamp}.csv" 
-    abstract_source_table_output_path = output_dir / abstract_source_table_output_file
-    abstract_source_df.to_csv( abstract_source_table_output_path, index=False, encoding="utf-8-sig" )
-    print("\nAbstract sentence source table CSV saved to:") 
-    print(abstract_source_table_output_path)
+    abstract_source_df = pd.DataFrame()
+    abstract_source_table_output_path = None
+
+    if abstract_source_table:
+        abstract_source_df = pd.concat(
+            abstract_source_table.values(),
+            ignore_index=True
+        )
+        abstract_source_table_output_file = f"{base_name}_abstract_sentence_source_table_{timestamp}.csv"
+        abstract_source_table_output_path = output_dir / abstract_source_table_output_file
+        abstract_source_df.to_csv(
+            abstract_source_table_output_path,
+            index=False,
+            encoding="utf-8-sig"
+        )
+        print("\nAbstract sentence source table CSV saved to:")
+        print(abstract_source_table_output_path)
+    else:
+        print("\nNo abstract sentence source table was saved because no abstract evidence was found.")
 
     # ------------------------------------------------------------
     # 20. Display final DataFrame
@@ -644,8 +655,10 @@ async def run_pipeline_async(config_path="./config.json"):
     return {
         "df_full": df_full,
         "citation_source_df": citation_source_df,
+        "abstract_source_df": abstract_source_df,
         "final_csv_path": full_output_path,
         "citation_source_table_path": source_table_output_path,
+        "abstract_source_table_path": abstract_source_table_output_path,
     }
 
 

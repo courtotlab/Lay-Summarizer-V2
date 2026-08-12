@@ -1,0 +1,14 @@
+{
+    "entrez_email": "osborn.s.xs07@gmail.com",
+    "entrez_api_key": "0140f08c57e308d5a8191207044ef199d008",
+    "max_summary_length": 350,
+    "min_summary_length": 250,
+    "output_directory": "./output",
+    "num_of_articles": 1,
+    "queries": [
+        {
+            "keyword": "Lung cancer",
+            "output_file": "Lung_cancer.csv"
+        }
+    ]
+}

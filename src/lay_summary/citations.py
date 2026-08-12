@@ -293,7 +293,7 @@ def citation_convert_evidence_ids_to_readable_citations(summary_text, source_tab
         if not valid_ids:
             return ""
         
-        #coonvert each evidence id into citation label
+        #convert each evidence id into citation label
         readable_citations = []
         for evidence_id in valid_ids: 
             readable_citations.append(f"({evidence_to_label[evidence_id]})")

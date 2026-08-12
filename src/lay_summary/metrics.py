@@ -1,9 +1,5 @@
 """
 Metric and cleanup helpers.
-
-Source of truth:
-- GPT4_Code.ipynb Cell 2: compute_readability, compute_ragas_faithfulness
-- GPT4_Code.ipynb Cell 9: remove_citation_parentheses, remove_all_parentheses_text, evaluate_similarity
 """
 
 import re
@@ -52,18 +48,8 @@ def clean_summary_text(summary):
     return summary.strip()
 
 
-def remove_citation_parentheses(summary):
-    """
-    Remove citation parentheses only.
-
-    Example:
-    'Cancer risk is higher (Introduction, para. 1).'
-    becomes:
-    'Cancer risk is higher.'
-
-    This version only removes parentheses containing 'para.',
-    so it does NOT remove things like '(VHL)' or '(mTOR)'.
-    """
+def remove_full_text_citation_parentheses(summary):
+  
     if summary is None:
         return ""
 
@@ -86,26 +72,28 @@ def remove_citation_parentheses(summary):
     return summary_without_citations.strip()
 
 
-def remove_all_parentheses_text(summary):
-    """
-    Remove all text inside parentheses, including the parentheses.
+def remove_abstract_citation_parentheses(summary):
 
-    This is the optional stronger version from the notebook.
-    """
     if summary is None:
         return ""
 
     summary = str(summary)
 
-    summary_without_parentheses = re.sub(r"\s*\([^)]*\)", "", summary)
-    summary_without_parentheses = re.sub(r"\s+", " ", summary_without_parentheses)
-    summary_without_parentheses = re.sub(
-        r"\s+([.,;:!?])",
-        r"\1",
-        summary_without_parentheses
+    summary_without_citations = re.sub(
+        r"\s*\([^)]*Abstract,\s*sentence\s*\d+[^)]*\)",
+        "",
+        summary
     )
 
-    return summary_without_parentheses.strip()
+    summary_without_citations = re.sub(r"\s+", " ", summary_without_citations)
+
+    summary_without_citations = re.sub(
+        r"\s+([.,;:!?])",
+        r"\1",
+        summary_without_citations
+    )
+
+    return summary_without_citations.strip()
 
 
 def evaluate_similarity(abstract_summary, full_text_summary):
@@ -146,7 +134,7 @@ def compute_readability(summary):
 def compute_ragas_faithfulness(summaries,
                                references, 
                                prompt, 
-                               model="gpt-4o-mini"):
+                               model="gpt-5.1"):
     """
     Compute RAGAS faithfulness.
 
@@ -190,8 +178,8 @@ def compute_ragas_faithfulness(summaries,
 
 async def compute_ragas_summarization_score(response,
                                            references,
-                                           model="gpt-4o-mini",
-                                           max_reference_chars=30000):
+                                           model="gpt-5.1"):
+                                        #    max_reference_chars=30000):
 
     client = AsyncOpenAI()
     llm = llm_factory(model, client=client)
@@ -210,11 +198,10 @@ async def compute_ragas_summarization_score(response,
         ):
             # Truncate very long references to avoid hitting the model's output
             # token limit during keyphrase extraction.
-            truncated_reference = reference[:max_reference_chars]
 
             try:
                 result = await scorer.ascore(
-                    reference_contexts=[truncated_reference],
+                    reference_contexts=[reference],
                     response=summary
                 )
                 scores[pmid] = result.value
