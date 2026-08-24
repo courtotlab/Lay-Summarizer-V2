@@ -1,9 +1,5 @@
 """
 Configuration helpers.
-
-Source of truth:
-- GPT4_Code.ipynb Cell 1
-- Minimal changes: moved notebook setup into reusable functions.
 """
 
 import json

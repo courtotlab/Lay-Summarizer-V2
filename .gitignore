@@ -1,1 +1,6 @@
 .env
+.DS_Store
+output/
+Lay_summary_human_review_tracking - ICGC PMIDs.csv
+new_50_articles_with_updated_faithfullness.csv
+pmids_list.txt

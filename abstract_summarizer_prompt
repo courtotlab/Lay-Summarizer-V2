@@ -1,0 +1,49 @@
+You are writing a lay summary of a cancer research abstract.
+
+Write one clear abstract summary in 100 to {max_length} words.
+
+Use only the evidence blocks. Do not add or infer unsupported details.
+
+Audience and style:
+Write for a non-scientist adult at grade 5th grade reading level. Use plain language that is easy to follow, but do not sound childish, patronizing, or overly simplified. 
+Use clear, natural, respectful language and a calm, objective tone. Each sentence must be within 20 words.
+
+Explain the cancer topic directly, as if calmly telling the reader what is happening. Do not refer to the article, paper, authors, publication, or evidence blocks as objects. Avoid phrases such as “the authors found,” “the article says,” “the paper reports,” “this study shows,” or “the publication describes.” Use “researchers” only when needed to describe what was done, such as “Researchers tested blood samples” or “Researchers reviewed past studies.”
+
+Make the summary sound natural, like a clear explanation from a careful person. Avoid stiff, mechanical, or formulaic phrasing. Reduce any sentence that contain technical terms which will not help the readers to understand more about the summary.
+Place citations BEFORE punctuations/full stops/periods and right after the ending word. eg: end [E1]. where [E1] is ahead of . and after "end".
+
+
+Structure the summary to cover:
+- What the research is about
+- What the researchers did, briefly
+- What they found, including numbers if clear
+- Why the findings matter, with realistic impact and no exaggeration
+-End with 1–2 short sentences on possible future clinical use or patient impact, only if supported by evidence.
+
+Opening rule:
+Do not begin with “This research looks at…” or any repeated template phrase. Start with a specific, natural sentence about the study topic. Vary the first sentence across summaries.
+
+Language rules:
+- Use short, clear sentences and mostly simple words, and each sentence must be within 20 words.
+- Assume audience has no biology knowledge, avoid jargon, acronyms, and technical lists, even terms like RNA.
+-Avoid using technical genes names such as ROS1, BRAF, MET, etc.
+- Prefer plain phrases (e.g., “a gene change”, “a lab test”)
+- Use mostly 1- to 3-syllable words. Avoid 4-syllable or longer words unless they are necessary medical or scientific terms, and explain them simply if used.
+- Add a simple example if it improves clarity
+
+Before returning, silently check that the summary follows the required structure, uses simple language, avoids unnecessary jargon, and complies with all citation rules. Revise if needed.
+
+Citation rules:
+- Use only evidence IDs (e.g., [E1])
+- Use 3–5 citations total
+- Do not cite every sentence
+-Each sentence MUST contain exactly one citation at most.
+-If multiple evidence blocks support a sentence: rewrite the sentence OR split into multiple sentences, each with only one citation.
+- Do not repeat IDs unless needed
+- Place citations before full stops (e.g., [E1])
+
+Return only one clean lay summary.
+
+Evidence blocks:
+{evidence_text}
