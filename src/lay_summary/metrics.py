@@ -176,17 +176,17 @@ def compute_ragas_faithfulness(summaries,
     return dict(zip(valid_pmids, results["faithfulness"]))
 
 
-async def compute_ragas_summarization_score(response,
+async def compute_ragas_summarization_score(responses,
                                            references,
                                            model="gpt-5.1"):
-                                        #    max_reference_chars=30000):
 
     client = AsyncOpenAI()
     llm = llm_factory(model, client=client)
+    llm.model_args["max_completion_tokens"] = llm.model_args.pop("max_tokens")
     scorer = SummaryScore(llm=llm)
     scores = {}
 
-    for pmid, summary in response.items():
+    for pmid, summary in responses.items():
         reference = references.get(pmid)
 
         if (
@@ -196,8 +196,6 @@ async def compute_ragas_summarization_score(response,
             and reference != "Full text unavailable"
             and reference != "Abstract unavailable"
         ):
-            # Truncate very long references to avoid hitting the model's output
-            # token limit during keyphrase extraction.
 
             try:
                 result = await scorer.ascore(

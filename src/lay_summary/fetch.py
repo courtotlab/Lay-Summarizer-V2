@@ -1,12 +1,3 @@
-"""
-Fetching helpers.
-
-Source of truth:
-- GPT4_Code.ipynb Cell 2: fetch_full_texts, fetch_abstracts
-- GPT4_Code.ipynb Cell 4: query PMIDs from config keyword
-- GPT4_Code.ipynb Cell 6: load PMIDs from pmid_file
-"""
-
 import time
 
 from Bio import Entrez

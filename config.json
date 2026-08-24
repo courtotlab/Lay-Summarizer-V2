@@ -1,14 +1,13 @@
 {
-    "entrez_email":"osborn.s.xs07@gmail.com",
-    "entrez_api_key":"0140f08c57e308d5a8191207044ef199d008",
+    "entrez_email":"YOUR EMAIL",
+    "entrez_api_key":"YOUR API KEY",
     "num_of_articles":1,
     "max_summary_length":250,
     "min_summary_length":150,
     "output_directory":"./output",
-    "pmid_file":"pmids_list.txt",
     "queries":[
         {"keyword":"",
-        "output_file":"summarization_test.csv"
+        "output_file":"api_test.csv"
         }
     ]
 }

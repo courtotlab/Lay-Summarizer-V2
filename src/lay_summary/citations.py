@@ -1,14 +1,5 @@
 """
 Citation/evidence workflow helpers.
-
-Source of truth:
-- GPT4_Code.ipynb Cell 7: base citation helper cell
-- GPT4_Code.ipynb Cell 8: patch cell that reduces crowded citations
-
-Important:
-- The patch cell redefines several functions from the base helper cell.
-- This file keeps the final patched behavior, because that is the behavior
-  used by the integrated main summarization cell.
 """
 
 import re
@@ -63,7 +54,7 @@ def citation_normalize_section_title(section_title):
     if "conclusion" in title or "summary" in title:
         return "Conclusion"
 
-    return "Body"
+    return "Body" #if none of the previous title is matched, categorize this section as body
 
 
 def citation_find_section_for_paragraph(paragraph_tag):
@@ -148,7 +139,7 @@ def citation_extract_evidence_table_for_one_pmid(pmid, fetcher):
 
         text = citation_clean_text(paragraph_text)
 
-        if len(text) < 40:
+        if len(text) < 40: #clean noise (paragraph less than 40 characters)
             return
 
         section_counts[section] = section_counts.get(section, 0) + 1
@@ -249,8 +240,6 @@ def citation_make_evidence_blocks_for_prompt(source_table):
 
 def citation_convert_evidence_ids_to_readable_citations(summary_text, source_table):
     """
-    Patched version from the notebook patch cell.
-
     Convert GPT's internal evidence IDs into readable citations:
     - [E4] becomes (Results, para. 2)
     """
@@ -345,7 +334,7 @@ def citation_count_words_without_citations(summary_text):
     return len(text.split())
 
 
-##Abstract summary helpers
+###Abstract summary helpers are below###
 
 
 def split_sentences(text):

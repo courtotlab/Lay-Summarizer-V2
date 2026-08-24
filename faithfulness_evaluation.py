@@ -1,7 +1,7 @@
 import pandas as pd
 import asyncio
 from src.lay_summary.config import load_project_config, setup_pubmed_fetcher
-from src.lay_summary.fetch import fetch_full_texts
+from src.lay_summary.fetch import fetch_full_texts, fetch_abstracts
 from src.lay_summary.metrics import compute_ragas_faithfulness
 
 
@@ -73,16 +73,16 @@ Evidence blocks:
 
     print(f"Loaded {len(pmids)} PMIDS")
 
-    _, full_texts_reference = fetch_full_texts(pmids, fetch) # fetch raw text
+    _, full_texts_reference = fetch_full_texts(pmids, fetch) # fetch raw text, change for abstract or full text
 
     scores_dict = compute_ragas_faithfulness(
         summaries=summary,
         references=full_texts_reference,
         prompt=prompt,
-        model="gpt-5.1")
+        model="gpt-4.1")
 
     df["New_RAGAS_Faithfullness_Score"] = df[pmid_col].map(scores_dict)
-    output_csv_path = "new_50_articles_with_updated_faithfullness.csv"
+    output_csv_path = "gpt4.1_50_articles_with_updated_fulltext_faithfullness.csv"
     df.to_csv(output_csv_path, index=False, encoding="utf-8-sig")
 
 if __name__ == "__main__":

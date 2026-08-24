@@ -1,14 +1,6 @@
 """
 Main pipeline.
 
-Source of truth:
-- GPT4_Code.ipynb Cell 9:
-  "MAIN SUMMARIZATION SECTION WITH CITATION INTEGRATION"
-
-Minimal changes:
-- Wrapped the notebook's top-level code in async function run_pipeline_async().
-- Added run_pipeline() so run_pipeline.py can execute it.
-- Kept the same variable flow and output column names.
 """
 
 import asyncio
@@ -57,22 +49,7 @@ from .summarize import (
 
 
 async def run_pipeline_async(config_path="./config.json"):
-    """
-    Run the whole lay-summary pipeline.
-
-    This fun1nfig and API keys.
-    2. Query PubMed for PMIDs.
-    3. Optionally load PMIDs from pmid_file.
-    4. Print article information.
-    5. Fetch full text.
-    6. Build citation evidence tables.
-    7. Generate citation-aware full-text summaries.
-    8. Create citation-free summaries for metrics.
-    9. Generate abstract summaries.
-    10. Compute similarity, readability, and RAGAS faithfulness.
-    11. Build final CSV.
-    12. Save citation source table CSV.
-    """
+    
     openai_api_key = load_openai_api_key()
 
     # Regular client is created to preserve the notebook setup,
