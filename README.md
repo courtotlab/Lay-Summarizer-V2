@@ -68,18 +68,42 @@ Edit the `config.json` file to set the number of articles to be queried from Pub
 ### Usage
 
 1. **Set your OpenAI API key**  
-   Export your key or use a `.env` file:
+   Create a `.env` file and enter:
    ```sh
-   export OPENAI_API_KEY=sk-...
+   OPENAI_API_KEY=sk-...
    ```
 
-2. **Run the program**  
+2. **Switching from Keyword Search to Manual PMID Input**
+
+    Create a new text file in your project folder (e.g., pmids_to_summarize.txt). Add one PubMed ID (PMID) per line:
+
+```json
+{
+  "num_of_articles": 10,
+  "max_summary_length": 350,
+  "min_summary_length": 250,
+  "entrez_email": "your_email@example.com",
+  "entrez_api_key": "YOUR_NCBI_API_KEY",
+  "output_directory":"./output",
+  "pmid_file":"FILE'S DIRECTORY"
+  "queries": [
+    {
+      "keyword": "renal cancer",
+      "output_file": "renal_cancer.csv"
+    }
+  ],
+  "pmid_file": "pmids_to_summarize.txt"
+}
+```
+    Start the script. The summarizer will automatically process only the PMIDs listed in your text file, bypassing keyword search.
+
+3. **Run the program**  
     Click on top right corner "Run Python File" or 
     ```bash
     uv run python run_pipeline.py
     ```
 
-3. **Outputs**  
+4. **Outputs**  
    - Summaries and metrics are saved in the `output/` directory as CSV files.
    - You can adjust keywords, number of articles, and other settings in `config.json`.
 
