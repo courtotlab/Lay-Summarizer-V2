@@ -8,6 +8,7 @@ from spacy.lang.en import English
 import pandas as pd
 from Bio import Entrez
 from bs4 import BeautifulSoup
+from lxml import etree
 
 
 def citation_clean_text(text):
@@ -127,7 +128,11 @@ def citation_extract_evidence_table_for_one_pmid(pmid, fetcher):
     xml_data = handle.read()
     handle.close()
 
-    soup = BeautifulSoup(xml_data, features="xml")
+    try:
+        soup = BeautifulSoup(xml_data, features="xml")
+    except etree.XMLSyntaxError as e:
+        print(f"Failed to parse XML: {e}")
+        soup = None
 
     rows = []
     section_counts = {}

@@ -16,6 +16,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
+
 def clean_summary_text(summary):
     """
     Clean summary text before saving it or scoring it.
@@ -119,7 +120,6 @@ def compute_readability(summary):
     """
     Compute Flesch Reading Ease and Flesch-Kincaid Grade.
 
-    Copied from the notebook.
     """
     if summary and summary != "No text available":
         summary = clean_summary_text(summary)
@@ -134,11 +134,9 @@ def compute_readability(summary):
 def compute_ragas_faithfulness(summaries,
                                references, 
                                prompt, 
-                               model="gpt-5.1"):
+                               model="gpt-4o-mini"):
     """
     Compute RAGAS faithfulness.
-
-    Copied closely from the notebook, with one small safety check:
     if there are no valid PMIDs, return an empty dictionary.
     """
     print(f"RAGAS faithfulness model used for evaluation: {model}")
@@ -182,7 +180,10 @@ async def compute_ragas_summarization_score(responses,
 
     client = AsyncOpenAI()
     llm = llm_factory(model, client=client)
-    llm.model_args["max_completion_tokens"] = llm.model_args.pop("max_tokens")
+    llm.model_args["max_completion_tokens"] = None
+    if "max_tokens" in llm.model_args:
+        del llm.model_args["max_tokens"]
+
     scorer = SummaryScore(llm=llm)
     scores = {}
 

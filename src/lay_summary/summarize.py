@@ -76,7 +76,7 @@ async def abstract_citation_summarize_one_article_async(pmid, text, max_length, 
             messages=[
                 {"role": "system", "content": (
                     "You are a careful biomedical summarizer. "
-                    "You write accurate biomedical lay summaries at about a 7th to 8th grade reading level with sparse, non-crowded citations."
+                    "You write accurate biomedical lay summaries at about a 5th grade reading level with sparse, non-crowded citations."
                     )
                 },
                 {"role": "user", "content": prompt}
@@ -135,6 +135,7 @@ async def citation_summarize_one_article_async(
             "citation_count": 0,
             "word_count": 0,
             "selected_evidence_count": 0,
+            "source_evidence_count": 0,
         }
 
     evidence_text = citation_make_evidence_blocks_for_prompt(source_table)
@@ -153,7 +154,7 @@ async def citation_summarize_one_article_async(
                     "role": "system",
                     "content": (
                         "You are a careful biomedical summarizer. "
-                        "You write accurate biomedical lay summaries at about a 7th to 8th grade reading level with sparse, non-crowded citations."
+                        "You write accurate biomedical lay summaries at about a 5th grade reading level with sparse, non-crowded citations."
                     ),
                 },
                 {
@@ -197,8 +198,12 @@ async def citation_summarize_many_articles_async(
     concurrency=5,
     model_name="gpt-5.1"
 ):
-    
-    # Generate citation-aware summaries for all PMIDs.
+    """
+    Generate citation-aware summaries for all PMIDs.
+
+    If an individual article fails or returns an incomplete result,
+    that article is skipped and the remaining articles continue.
+    """
 
     semaphore = asyncio.Semaphore(concurrency)
 
@@ -208,27 +213,71 @@ async def citation_summarize_many_articles_async(
             title = metadata.get("title", "Title unavailable")
             source_table = source_tables.get(pmid, pd.DataFrame())
 
-            result = await citation_summarize_one_article_async(
-                pmid=pmid,
-                title=title,
-                source_table=source_table,
-                max_length=max_length,
-                prompt_file_path=prompt_file_path,
-                model_name=model_name
-            )
+            try:
+                result = await citation_summarize_one_article_async(
+                    pmid=pmid,
+                    title=title,
+                    source_table=source_table,
+                    max_length=max_length,
+                    prompt_file_path=prompt_file_path,
+                    model_name=model_name
+                )
 
-            return pmid, result
+                if result is None:
+                    print(
+                        f"Skipping PMID {pmid}: "
+                        "no citation evidence blocks were available."
+                    )
+                    return pmid, None
 
-    tasks = []
+                # Make sure the summarizer returned a dictionary.
+                if not isinstance(result, dict):
+                    print(
+                        f"Skipping PMID {pmid}: "
+                        f"summarizer returned {type(result).__name__}, "
+                        f"not a dictionary."
+                    )
+                    return pmid, None
 
-    for pmid in article_metadata:
-        tasks.append(limited_summary(pmid))
+                # These are required downstream by pipeline.py.
+                required_fields = {
+                    "summary_with_readable_citations",
+                    "raw_summary_with_evidence_ids",
+                    "citation_count",
+                    "used_evidence_ids",
+                    "source_evidence_count",
+                }
+
+                missing_fields = required_fields - result.keys()
+
+                if missing_fields:
+                    print(
+                        f"Skipping PMID {pmid}: "
+                        f"citation summarizer returned an incomplete result. "
+                        f"Missing fields: {sorted(missing_fields)}"
+                    )
+                    return pmid, None
+
+                return pmid, result
+
+            except Exception as error:
+                print(
+                    f"Skipping PMID {pmid}: "
+                    f"citation summarization failed: {error}"
+                )
+                return pmid, None
+
+    tasks = [
+        limited_summary(pmid)
+        for pmid in article_metadata
+    ]
 
     results = await asyncio.gather(*tasks)
 
     summary_results = {}
 
     for pmid, result in results:
-        summary_results[pmid] = result
+        if result is not None:
+            summary_results[pmid] = result
 
     return summary_results

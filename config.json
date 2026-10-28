@@ -1,12 +1,13 @@
 {
-    "entrez_email":"YOUR EMAIL",
-    "entrez_api_key":"YOUR API KEY",
-    "num_of_articles":1,
+    "entrez_email":"t2yu@oicr.on.ca",
+    "entrez_api_key":"dc7c241d9d89547968d4ded94fbf4630cb08",
+    "num_of_articles":2,
     "max_summary_length":250,
     "min_summary_length":150,
     "output_directory":"./output",
+    "pmid_file":"pmid.txt",
     "queries":[
-        {"keyword":"",
+        {"keyword":"renal cancer",
         "output_file":"api_test.csv"
         }
     ]

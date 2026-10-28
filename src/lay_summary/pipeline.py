@@ -47,6 +47,21 @@ from .summarize import (
     set_async_client as set_summary_async_client
 )
 
+INVALID_SUMMARY_TEXTS = {
+    "No source evidence available.",
+    "No text available",
+}
+
+
+def is_valid_summary(summary):
+    if not summary:
+        return False
+
+    if not isinstance(summary, str):
+        return False
+
+    return summary.strip() not in INVALID_SUMMARY_TEXTS
+
 
 async def run_pipeline_async(config_path="./config.json"):
     
@@ -154,12 +169,21 @@ async def run_pipeline_async(config_path="./config.json"):
     print("\nBuilding citation evidence tables...")
     print("------------------------------------")
 
+    valid_pmids = []
+
     for pmid in pmids:
         try:
             title, pmcid, source_table = citation_extract_evidence_table_for_one_pmid(
                 pmid=pmid,
                 fetcher=fetch
             )
+
+            # Treat an empty evidence table as a failed article.
+            if source_table is None or source_table.empty:
+                print(
+                    f"Skipping PMID {pmid}: XML citation evidence table is empty."
+                )
+                continue
 
             article_metadata[pmid] = {
                 "title": title,
@@ -168,6 +192,7 @@ async def run_pipeline_async(config_path="./config.json"):
             }
 
             citation_source_tables[pmid] = source_table
+            valid_pmids.append(pmid)
 
             print(
                 f"PMID {pmid}: extracted {len(source_table)} citation evidence paragraphs."
@@ -175,14 +200,36 @@ async def run_pipeline_async(config_path="./config.json"):
 
         except Exception as error:
             print(f"Error building citation table for PMID {pmid}: {error}")
+            print(
+            f"Skipping PMID {pmid}: error building citation table: {error}"
+            )
 
-            article_metadata[pmid] = {
-                "title": titles_from_full_text.get(pmid, "Title unavailable"),
-                "pmcid": None,
-                "link": f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/"
-            }
+    # Only continue with articles that have valid XML evidence.
+    pmids = valid_pmids
 
-            citation_source_tables[pmid] = pd.DataFrame()
+    # Keep all downstream data restricted to the valid PMIDs.
+    titles_from_full_text = {
+        pmid: titles_from_full_text[pmid]
+        for pmid in pmids
+        if pmid in titles_from_full_text
+    }
+
+    full_texts = {
+        pmid: full_texts[pmid]
+        for pmid in pmids
+        if pmid in full_texts
+    }
+
+    print(f"\nArticles with valid citation evidence: {len(pmids)}")
+    print(f"PMIDs proceeding to summarization: {pmids}")
+
+    if not pmids:
+        raise ValueError(
+            "No articles have valid citation evidence tables. "
+            "All selected articles were skipped."
+        )
+
+    citation_source_tables[pmid] = pd.DataFrame()
 
     # ------------------------------------------------------------
     # 5. Generate citation-aware full-text summary
@@ -199,12 +246,17 @@ async def run_pipeline_async(config_path="./config.json"):
         model_name="gpt-5.1"
     )
 
+
+    #------------------------------------------------------------
+    # 5.1 Clean and validate citation-aware summaries
+    #------------------------------------------------------------
     full_text_summaries_with_citations = {}
 
-    for pmid in citation_summary_results:
-        full_text_summaries_with_citations[pmid] = clean_summary_text(citation_summary_results[pmid][
-            "summary_with_readable_citations"
-        ])
+    for pmid, result in citation_summary_results.items():
+        full_text_summaries_with_citations[pmid] = clean_summary_text(
+            result["summary_with_readable_citations"]
+        )
+
 
     # ------------------------------------------------------------
     # 6. Create citation-free full-text summary for metrics
@@ -243,7 +295,7 @@ async def run_pipeline_async(config_path="./config.json"):
     abstract_summaries = await abstract_citation_summarize_many_article_async(
         abstracts,
         max_length=max_summary_length,
-        prompt_file_path=Path(__file__).resolve().parents[2] / "full_summarizer_prompt",
+        prompt_file_path=Path(__file__).resolve().parents[2] / "abstract_summarizer_prompt",
         concurrency=15
     )
 
@@ -278,17 +330,20 @@ async def run_pipeline_async(config_path="./config.json"):
     }
 
     # ------------------------------------------------------------
-    # 10. Readability scores
+    # 10. Readability scores (only for articles with valid summaries)
     # ------------------------------------------------------------
     abstract_readability = {
-        pmid: compute_readability(abstract_summaries_without_citations[pmid])
-        for pmid in abstract_summaries_without_citations
+        pmid: compute_readability(summary)
+        for pmid, summary in abstract_summaries_without_citations.items()
+        if is_valid_summary(summary)
     }
 
     full_text_readability = {
-        pmid: compute_readability(full_text_summaries_without_citations[pmid])
-        for pmid in full_text_summaries_without_citations
+        pmid: compute_readability(summary)
+        for pmid, summary in full_text_summaries_without_citations.items()
+        if is_valid_summary(summary)
     }
+
 
     # ------------------------------------------------------------
     # 11. Full text availability
@@ -301,45 +356,62 @@ async def run_pipeline_async(config_path="./config.json"):
     # ------------------------------------------------------------
     # 12. RAGAS faithfulness & Summarization Score
     # ------------------------------------------------------------
-    ragas_prompt = (
-        "Summarize this article in 250 to 350 words for an adult lay reader "
-        "with 2nd grade level scientific experience. Use simple words. "
-        "The tone should be casual. "
-        "Avoid emotive or negative language such as battle or fight. "
-        "Keep words under 4 syllables and sentences under 10 words."
-    )
+    #get text from prompt files
+    with open(Path(__file__).resolve().parents[2] / "abstract_summarizer_prompt", "r", encoding="utf-8") as file:
+        abstract_ragas_prompt = file.read()
+
+    with open(Path(__file__).resolve().parents[2] / "full_summarizer_prompt", "r", encoding="utf-8") as file:
+            fulltext_ragas_prompt = file.read()
 
     print("\nComputing RAGAS faithfulness...")
     print("------------------------------")
 
+    #check for valid summaries before computing RAGAS faithfulness
+    valid_abstract_summaries = {
+    pmid: summary
+    for pmid, summary in abstract_summaries_without_citations.items()
+    if is_valid_summary(summary)
+    }   
+
+    valid_fulltext_summaries = {
+        pmid: summary
+        for pmid, summary in full_text_summaries_without_citations.items()
+        if is_valid_summary(summary)
+    }
+
     abstract_ragas_faithfulness = compute_ragas_faithfulness(
-        abstract_summaries_without_citations,
+        valid_abstract_summaries,
         abstracts,
-        ragas_prompt
+        abstract_ragas_prompt
     )
 
     fulltext_ragas_faithfulness = compute_ragas_faithfulness(
-        full_text_summaries_without_citations,
+        valid_fulltext_summaries,
         full_texts,
-        ragas_prompt
+        fulltext_ragas_prompt
     )
 
     abstract_ragas_summarization = await compute_ragas_summarization_score(
-    abstract_summaries_without_citations,
+    valid_abstract_summaries,
     abstracts
     )
 
     fulltext_ragas_summarization = await compute_ragas_summarization_score(
-        full_text_summaries_without_citations,
+        valid_fulltext_summaries,
         full_texts
     )
 
     ###Calculate the smog index & gunning fog score of the article summaries and store as a dict
     smog_index = {}
     gunning_fog_score = {}
-    for pmid in full_text_summaries_without_citations:
-        smog_index[pmid] = calculate_smog_index(full_text_summaries_without_citations[pmid])
-        gunning_fog_score[pmid] = calculate_gunning_fog_score(full_text_summaries_without_citations[pmid])
+
+    for pmid, summary in full_text_summaries_without_citations.items():
+        if not is_valid_summary(summary):
+            continue
+
+        smog_index[pmid] = calculate_smog_index(summary)
+        gunning_fog_score[pmid] = calculate_gunning_fog_score(summary)
+
 
 
     # ------------------------------------------------------------
@@ -422,7 +494,8 @@ async def run_pipeline_async(config_path="./config.json"):
             "pmid": pmid,
             "Abstract_SMOG_Index": calculate_smog_index(abstract_summaries_without_citations[pmid])
         }
-        for pmid in abstract_summaries_without_citations
+        for pmid, summary in abstract_summaries_without_citations.items()
+        if is_valid_summary(summary)
     ])
 
     Full_Text_SMOG_Index = pd.DataFrame([
@@ -438,7 +511,8 @@ async def run_pipeline_async(config_path="./config.json"):
             "pmid": pmid,
             "Abstract_Gunning_Fog_Score": calculate_gunning_fog_score(abstract_summaries_without_citations[pmid])
         }
-        for pmid in abstract_summaries_without_citations
+        for pmid, summary in abstract_summaries_without_citations.items()
+        if is_valid_summary(summary)
     ])
 
     Full_Text_Gunning_Fog_Score = pd.DataFrame([
@@ -505,8 +579,8 @@ async def run_pipeline_async(config_path="./config.json"):
         Full_Text_Readability,
         Abstract_RAGAS_Faithfulness,
         FullText_RAGAS_Faithfulness,
-        Abstract_RAGAS_Summarization,
-        FullText_RAGAS_Summarization,
+        # Abstract_RAGAS_Summarization,
+        # FullText_RAGAS_Summarization,
         Abstract_SMOG_Index,
         Full_Text_SMOG_Index,
         Abstract_Gunning_Fog_Score,

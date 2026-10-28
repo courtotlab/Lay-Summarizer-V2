@@ -5,7 +5,7 @@ Write one clear full-text summary in 100 to {max_length} words.
 Use only the evidence blocks. Do not add or infer unsupported details.
 
 Audience and style:
-Write for a non-scientist adult at grade 5th grade reading level. Use plain language that is easy to follow, but do not sound childish, patronizing, or overly simplified. 
+Write for a non-scientist adult at grade 2nd grade reading level. Use plain language that is easy to follow, but do not sound childish, patronizing, or overly simplified. 
 Use clear, natural, respectful language and a calm, objective tone. Each sentence must be within 20 words.
 
 Explain the cancer topic directly, as if calmly telling the reader what is happening. Do not refer to the article, paper, authors, publication, or evidence blocks as objects. Avoid phrases such as “the authors found,” “the article says,” “the paper reports,” “this study shows,” or “the publication describes.” Use “researchers” only when needed to describe what was done, such as “Researchers tested blood samples” or “Researchers reviewed past studies.”

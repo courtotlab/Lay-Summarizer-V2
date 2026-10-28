@@ -36,8 +36,6 @@ def load_openai_api_key():
     The notebook checks:
         openai_api_key = os.environ.get("OPENAI_API_KEY")
 
-    The only small change here is calling load_dotenv() first,
-    so a local .env file works when running run_pipeline.py.
     """
     load_dotenv()
 
@@ -65,6 +63,7 @@ def setup_pubmed_fetcher(config):
     """
     Create PubMedFetcher and configure Entrez, matching the notebook.
     """
+    os.environ["NCBI_API_KEY"] = config["entrez_api_key"]
     fetch = PubMedFetcher()
 
     Entrez.email = config["entrez_email"]

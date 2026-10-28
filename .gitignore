@@ -1,3 +1,6 @@
 .env
+.venv
 .DS_Store
 output/
+config.json
+**/__pycache__/

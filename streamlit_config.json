@@ -4,11 +4,6 @@
     "max_summary_length": 350,
     "min_summary_length": 250,
     "output_directory": "./output",
-    "num_of_articles": 1,
-    "queries": [
-        {
-            "keyword": "Lung cancer",
-            "output_file": "Lung_cancer.csv"
-        }
-    ]
+    "num_of_articles": 2,
+    "pmid_file": "/Users/t2yu/Desktop/Lay-Summarizer-V2/user_pmids_wy9s4pl2.txt"
 }
