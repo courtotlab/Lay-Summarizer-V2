@@ -1,0 +1,301 @@
+Participant_IDs,Experience_Level,Accuracy_ID,Accurate_Abstract,Accurate_Full-Text,Abstract_Score,Full_Text_Score
+P-001,3,26,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-001,3,76,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-001,3,28,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-001,3,78,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-001,3,30,5 - Extremely accurately (Completely captured all essential details),,5,
+P-001,3,80,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-001,3,31,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-001,3,81,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-001,3,38,5 - Extremely accurately (Completely captured all essential details),,5,
+P-001,3,88,,5 - Extremely accurately (Completely captured all essential details),,5
+P-002,5,26,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-002,5,76,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-002,5,28,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-002,5,78,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-002,5,30,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-002,5,80,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-002,5,31,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-002,5,81,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-002,5,38,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-002,5,88,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-003,4,26,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-003,4,76,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-003,4,28,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-003,4,78,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-003,4,30,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-003,4,80,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-003,4,31,5 - Extremely accurately (Completely captured all essential details),,5,
+P-003,4,81,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-003,4,38,5 - Extremely accurately (Completely captured all essential details),,5,
+P-003,4,88,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-004,5,26,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-004,5,76,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-004,5,28,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-004,5,78,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-004,5,30,5 - Extremely accurately (Completely captured all essential details),,5,
+P-004,5,80,,5 - Extremely accurately (Completely captured all essential details),,5
+P-004,5,31,5 - Extremely accurately (Completely captured all essential details),,5,
+P-004,5,81,,5 - Extremely accurately (Completely captured all essential details),,5
+P-004,5,38,5 - Extremely accurately (Completely captured all essential details),,5,
+P-004,5,88,,5 - Extremely accurately (Completely captured all essential details),,5
+P-005,3,26,,,,
+P-005,3,76,,,,
+P-005,3,28,,,,
+P-005,3,78,,,,
+P-005,3,30,,,,
+P-005,3,80,,,,
+P-005,3,31,,,,
+P-005,3,81,,,,
+P-005,3,38,,,,
+P-005,3,88,,,,
+P-006,3,26,5 - Extremely accurately (Completely captured all essential details),,5,
+P-006,3,76,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-006,3,28,5 - Extremely accurately (Completely captured all essential details),,5,
+P-006,3,78,,5 - Extremely accurately (Completely captured all essential details),,5
+P-006,3,30,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-006,3,80,,5 - Extremely accurately (Completely captured all essential details),,5
+P-006,3,31,5 - Extremely accurately (Completely captured all essential details),,5,
+P-006,3,81,,5 - Extremely accurately (Completely captured all essential details),,5
+P-006,3,38,5 - Extremely accurately (Completely captured all essential details),,5,
+P-006,3,88,,5 - Extremely accurately (Completely captured all essential details),,5
+P-007,3,26,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-007,3,76,,,,
+P-007,3,28,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-007,3,78,,,,
+P-007,3,30,,,,
+P-007,3,80,,,,
+P-007,3,31,,,,
+P-007,3,81,,,,
+P-007,3,38,,,,
+P-007,3,88,,,,
+P-008,4,18,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-008,4,68,,5 - Extremely accurately (Completely captured all essential details),,5
+P-008,4,11,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-008,4,61,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-008,4,2,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-008,4,52,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-008,4,10,5 - Extremely accurately (Completely captured all essential details),,5,
+P-008,4,60,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-008,4,14,5 - Extremely accurately (Completely captured all essential details),,5,
+P-008,4,64,,5 - Extremely accurately (Completely captured all essential details),,5
+P-009,4,18,5 - Extremely accurately (Completely captured all essential details),,5,
+P-009,4,68,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-009,4,11,5 - Extremely accurately (Completely captured all essential details),,5,
+P-009,4,61,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-009,4,2,5 - Extremely accurately (Completely captured all essential details),,5,
+P-009,4,52,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-009,4,10,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-009,4,60,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-009,4,14,5 - Extremely accurately (Completely captured all essential details),,5,
+P-009,4,64,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-010,2,18,,,,
+P-010,2,68,,,,
+P-010,2,11,,,,
+P-010,2,61,,,,
+P-010,2,2,,,,
+P-010,2,52,,,,
+P-010,2,10,,,,
+P-010,2,60,,,,
+P-010,2,14,,,,
+P-010,2,64,,,,
+P-011,3,18,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-011,3,68,,5 - Extremely accurately (Completely captured all essential details),,5
+P-011,3,11,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-011,3,61,,5 - Extremely accurately (Completely captured all essential details),,5
+P-011,3,2,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-011,3,52,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-011,3,10,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-011,3,60,,5 - Extremely accurately (Completely captured all essential details),,5
+P-011,3,14,"2 - Mostly inaccurately (Captured a few points, but distorted key ideas)",,2,
+P-011,3,64,,5 - Extremely accurately (Completely captured all essential details),,5
+P-012,3,18,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-012,3,68,,5 - Extremely accurately (Completely captured all essential details),,5
+P-012,3,11,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-012,3,61,,5 - Extremely accurately (Completely captured all essential details),,5
+P-012,3,2,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-012,3,52,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-012,3,10,5 - Extremely accurately (Completely captured all essential details),,5,
+P-012,3,60,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-012,3,14,5 - Extremely accurately (Completely captured all essential details),,5,
+P-012,3,64,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-013,4,18,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-013,4,68,,5 - Extremely accurately (Completely captured all essential details),,5
+P-013,4,11,5 - Extremely accurately (Completely captured all essential details),,5,
+P-013,4,61,,5 - Extremely accurately (Completely captured all essential details),,5
+P-013,4,2,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-013,4,52,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-013,4,10,5 - Extremely accurately (Completely captured all essential details),,5,
+P-013,4,60,,5 - Extremely accurately (Completely captured all essential details),,5
+P-013,4,14,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-013,4,64,,5 - Extremely accurately (Completely captured all essential details),,5
+P-014,3,27,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-014,3,77,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-014,3,34,5 - Extremely accurately (Completely captured all essential details),,5,
+P-014,3,84,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-014,3,39,"2 - Mostly inaccurately (Captured a few points, but distorted key ideas)",,2,
+P-014,3,89,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-014,3,1,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-014,3,51,,5 - Extremely accurately (Completely captured all essential details),,5
+P-014,3,32,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-014,3,82,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-015,3,27,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-015,3,77,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-015,3,34,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-015,3,84,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-015,3,39,"2 - Mostly inaccurately (Captured a few points, but distorted key ideas)",,2,
+P-015,3,89,,"2 - Mostly inaccurately (Captured a few points, but distorted key ideas)",,2
+P-015,3,1,"2 - Mostly inaccurately (Captured a few points, but distorted key ideas)",,2,
+P-015,3,51,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-015,3,32,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-015,3,82,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-016,5,27,5 - Extremely accurately (Completely captured all essential details),,5,
+P-016,5,77,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-016,5,34,5 - Extremely accurately (Completely captured all essential details),,5,
+P-016,5,84,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-016,5,39,5 - Extremely accurately (Completely captured all essential details),,5,
+P-016,5,89,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-016,5,1,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-016,5,51,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-016,5,32,5 - Extremely accurately (Completely captured all essential details),,5,
+P-016,5,82,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-017,5,27,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-017,5,77,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-017,5,34,5 - Extremely accurately (Completely captured all essential details),,5,
+P-017,5,84,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-017,5,39,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-017,5,89,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-017,5,1,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-017,5,51,,5 - Extremely accurately (Completely captured all essential details),,5
+P-017,5,32,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-017,5,82,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-018,3,27,5 - Extremely accurately (Completely captured all essential details),,5,
+P-018,3,77,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-018,3,34,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-018,3,84,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-018,3,39,5 - Extremely accurately (Completely captured all essential details),,5,
+P-018,3,89,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-018,3,1,5 - Extremely accurately (Completely captured all essential details),,5,
+P-018,3,51,,5 - Extremely accurately (Completely captured all essential details),,5
+P-018,3,32,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-018,3,82,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-019,4,27,5 - Extremely accurately (Completely captured all essential details),,5,
+P-019,4,77,,5 - Extremely accurately (Completely captured all essential details),,5
+P-019,4,34,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-019,4,84,,5 - Extremely accurately (Completely captured all essential details),,5
+P-019,4,39,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-019,4,89,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-019,4,1,5 - Extremely accurately (Completely captured all essential details),,5,
+P-019,4,51,,5 - Extremely accurately (Completely captured all essential details),,5
+P-019,4,32,5 - Extremely accurately (Completely captured all essential details),,5,
+P-019,4,82,,5 - Extremely accurately (Completely captured all essential details),,5
+P-020,4,37,,,,
+P-020,4,87,,,,
+P-020,4,25,,,,
+P-020,4,75,,,,
+P-020,4,16,,,,
+P-020,4,66,,,,
+P-020,4,42,,,,
+P-020,4,92,,,,
+P-020,4,47,,,,
+P-020,4,97,,,,
+P-021,4,37,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-021,4,87,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-021,4,25,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-021,4,75,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-021,4,16,5 - Extremely accurately (Completely captured all essential details),,5,
+P-021,4,66,,5 - Extremely accurately (Completely captured all essential details),,5
+P-021,4,42,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-021,4,92,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-021,4,47,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-021,4,97,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-022,5,37,5 - Extremely accurately (Completely captured all essential details),,5,
+P-022,5,87,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-022,5,25,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-022,5,75,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-022,5,16,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-022,5,66,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-022,5,42,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-022,5,92,,"2 - Mostly inaccurately (Captured a few points, but distorted key ideas)",,2
+P-022,5,47,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-022,5,97,,"2 - Mostly inaccurately (Captured a few points, but distorted key ideas)",,2
+P-023,3,37,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-023,3,87,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-023,3,25,5 - Extremely accurately (Completely captured all essential details),,5,
+P-023,3,75,,5 - Extremely accurately (Completely captured all essential details),,5
+P-023,3,16,5 - Extremely accurately (Completely captured all essential details),,5,
+P-023,3,66,,5 - Extremely accurately (Completely captured all essential details),,5
+P-023,3,42,5 - Extremely accurately (Completely captured all essential details),,5,
+P-023,3,92,,5 - Extremely accurately (Completely captured all essential details),,5
+P-023,3,47,5 - Extremely accurately (Completely captured all essential details),,5,
+P-023,3,97,,5 - Extremely accurately (Completely captured all essential details),,5
+P-024,5,37,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-024,5,87,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-024,5,25,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-024,5,75,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-024,5,16,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-024,5,66,,,,
+P-024,5,42,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-024,5,92,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-024,5,47,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-024,5,97,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-025,3,37,1 - Extremely inaccurately (Missed main points and contained major errors),,1,
+P-025,3,87,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-025,3,25,1 - Extremely inaccurately (Missed main points and contained major errors),,1,
+P-025,3,75,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-025,3,16,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-025,3,66,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-025,3,42,,,,
+P-025,3,92,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-025,3,47,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-025,3,97,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-026,3,45,5 - Extremely accurately (Completely captured all essential details),,5,
+P-026,3,95,,,,
+P-026,3,43,5 - Extremely accurately (Completely captured all essential details),,5,
+P-026,3,93,,,,
+P-026,3,49,,,,
+P-026,3,99,,,,
+P-026,3,50,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-026,3,100,,,,
+P-026,3,44,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-026,3,94,,,,
+P-027,3,45,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-027,3,95,,1 - Extremely inaccurately (Missed main points and contained major errors),,1
+P-027,3,43,1 - Extremely inaccurately (Missed main points and contained major errors),,1,
+P-027,3,93,,1 - Extremely inaccurately (Missed main points and contained major errors),,1
+P-027,3,49,1 - Extremely inaccurately (Missed main points and contained major errors),,1,
+P-027,3,99,,1 - Extremely inaccurately (Missed main points and contained major errors),,1
+P-027,3,50,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-027,3,100,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-027,3,44,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-027,3,94,,5 - Extremely accurately (Completely captured all essential details),,5
+P-028,5,45,"2 - Mostly inaccurately (Captured a few points, but distorted key ideas)",,2,
+P-028,5,95,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-028,5,43,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-028,5,93,,"2 - Mostly inaccurately (Captured a few points, but distorted key ideas)",,2
+P-028,5,49,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-028,5,99,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-028,5,50,"2 - Mostly inaccurately (Captured a few points, but distorted key ideas)",,2,
+P-028,5,100,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-028,5,44,"2 - Mostly inaccurately (Captured a few points, but distorted key ideas)",,2,
+P-028,5,94,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-029,4,45,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-029,4,95,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-029,4,43,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-029,4,93,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-029,4,49,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3,
+P-029,4,99,,"3 - Moderately accurately (Captured the main idea, but missed some details)",,3
+P-029,4,50,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-029,4,100,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-029,4,44,4 - Mostly accurately (Captured almost all key points with few missing details),,4,
+P-029,4,94,,4 - Mostly accurately (Captured almost all key points with few missing details),,4
+P-030,2,45,,,,
+P-030,2,95,,,,
+P-030,2,43,,,,
+P-030,2,93,,,,
+P-030,2,49,,,,
+P-030,2,99,,,,
+P-030,2,50,,,,
+P-030,2,100,,,,
+P-030,2,44,,,,
+P-030,2,94,,,,

@@ -4,16 +4,17 @@ Metric and cleanup helpers.
 
 import re
 from ragas.llms import llm_factory
-from ragas.metrics.collections import SummaryScore
+from ragas.metrics.collections import SummaryScore, Faithfulness
 from openai import AsyncOpenAI
 import textstat
 from datasets import Dataset
 from langchain_openai import ChatOpenAI
-from ragas import evaluate
+from ragas import evaluate, prompt
 from ragas.llms import LangchainLLMWrapper
 from ragas.metrics import faithfulness
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from thinc import model
 
 
 
@@ -131,7 +132,7 @@ def compute_readability(summary):
         return None, None
 
 
-def compute_ragas_faithfulness(summaries,
+async def compute_ragas_faithfulness(summaries,
                                references, 
                                prompt, 
                                model="gpt-4o-mini"):
@@ -140,38 +141,64 @@ def compute_ragas_faithfulness(summaries,
     if there are no valid PMIDs, return an empty dictionary.
     """
     print(f"RAGAS faithfulness model used for evaluation: {model}")
+    client = AsyncOpenAI()
+    llm = llm_factory(model, client=client)
+    llm.model_args["max_completion_tokens"] = None
+    if "max_tokens" in llm.model_args:
+        del llm.model_args["max_tokens"]
 
-    evaluator_llm = LangchainLLMWrapper(ChatOpenAI(model=model))
+    scorer = Faithfulness(llm=llm)
+    
 
-    data = {
-        "question": [],
-        "answer": [],
-        "contexts": []
-    }
-
-    valid_pmids = []
-
+    scores = {}
     for pmid, summary in summaries.items():
         reference = references.get(pmid)
+        if (summary and reference
+                and summary != "No text available"
+                and reference != "Full text unavailable"):
+            try:
+                result = await scorer.ascore(
+                    user_input=prompt,
+                    response=summary,
+                    retrieved_contexts=[reference],
+                )
+                scores[pmid] = result.value
+            except Exception as e:
+                print(f"  Warning: faithfulness failed for PMID {pmid}: {e}")
+                scores[pmid] = None
+    return scores
 
-        if (
-            summary
-            and reference
-            and summary != "No text available"
-            and reference != "Full text unavailable"
-        ):
-            data["question"].append(prompt)
-            data["answer"].append(summary)
-            data["contexts"].append([reference])
-            valid_pmids.append(pmid)
+    # evaluator_llm = LangchainLLMWrapper(ChatOpenAI(model=model))
 
-    if not valid_pmids:
-        return {}
+    # data = {
+    #     "question": [],
+    #     "answer": [],
+    #     "contexts": []
+    # }
 
-    dataset = Dataset.from_dict(data)
-    results = evaluate(dataset, metrics=[faithfulness], llm=evaluator_llm)
+    # valid_pmids = []
 
-    return dict(zip(valid_pmids, results["faithfulness"]))
+    # for pmid, summary in summaries.items():
+    #     reference = references.get(pmid)
+
+    #     if (
+    #         summary
+    #         and reference
+    #         and summary != "No text available"
+    #         and reference != "Full text unavailable"
+    #     ):
+    #         data["question"].append(prompt)
+    #         data["answer"].append(summary)
+    #         data["contexts"].append([reference])
+    #         valid_pmids.append(pmid)
+
+    # if not valid_pmids:
+    #     return {}
+
+    # dataset = Dataset.from_dict(data)
+    # results = evaluate(dataset, metrics=[faithfulness], llm=evaluator_llm)
+
+    # return dict(zip(valid_pmids, results["faithfulness"]))
 
 
 async def compute_ragas_summarization_score(responses,

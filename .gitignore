@@ -4,3 +4,5 @@
 output/
 config.json
 **/__pycache__/
+.Rproj.user
+streamlit_config.json

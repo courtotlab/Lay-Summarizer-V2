@@ -9,14 +9,15 @@ from src.lay_summary.metrics import (
     compute_ragas_faithfulness,
     compute_ragas_summarization_score,
 )
+from pathlib import Path
+
+PROJECT_ROOT = Path.cwd().parent
+DATA_DIR = PROJECT_ROOT / "data"
 
 # Configuration Constants
-MODEL = "gpt-5.1"
+MODEL = "gpt-5.1" #edit model configuration here
 NUM_REPLICATES = 5
-INPUT_CSV_PATH = (
-    "/Users/t2yu/Desktop/2026-Lay-Summaries/Plot-R/"
-    "First10.csv"
-)
+INPUT_CSV_PATH = (DATA_DIR / "Summaries_Table.csv")
 
 FAITHFULNESS_PROMPT = """You are writing a lay summary of a cancer research article.
 
@@ -179,7 +180,7 @@ async def evaluate_ragas_combined_from_csv():
     # 5. Save consolidated dataframe
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     output_csv_path = (
-        f"/Users/t2yu/Desktop/2026-Lay-Summaries/Plot-R/"
+        DATA_DIR /
         f"50_articles_combined_ragas_scores_{MODEL}_{timestamp}.csv"
     )
     df.to_csv(output_csv_path, index=False, encoding="utf-8-sig")

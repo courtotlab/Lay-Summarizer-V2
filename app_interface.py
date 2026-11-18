@@ -9,6 +9,11 @@ import streamlit as st
 from urllib.parse import quote
 import streamlit.components.v1 as components
 
+#get entrez email and api key from config.json
+with open("config.json") as f:
+    config = json.load(f)
+    DEFAULT_ENTREZ_EMAIL = config.get("entrez_email", "")
+    DEFAULT_ENTREZ_API_KEY = config.get("entrez_api_key", "")
 # ------------------------------------------------------------
 # 1. Make sure Streamlit can import your backend from src/
 # ------------------------------------------------------------
@@ -21,8 +26,6 @@ if str(SRC_FOLDER) not in sys.path:
 
 from lay_summary.pipeline import run_pipeline  # noqa: E402
 
-DEFAULT_ENTREZ_EMAIL = "osborn.s.xs07@gmail.com"
-DEFAULT_ENTREZ_API_KEY = "0140f08c57e308d5a8191207044ef199d008"
 
 
 def source_url_for(pmid, pmcid):

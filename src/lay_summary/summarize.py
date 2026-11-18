@@ -1,15 +1,3 @@
-"""
-OpenAI summarization helpers.
-
-Source of truth:
-- GPT4_Code.ipynb Cell 2:
-  async_summarize
-  gpt4_summarize_async
-
-Minimal change:
-- async_client is set by set_async_client() from run_pipeline.py.
-"""
-
 import asyncio
 from lay_summary.citations import (
     citation_count_readable_citations,

@@ -1,26 +1,26 @@
 ## Overview
 
 This pipeline turns papers from PubMed/PMC into lay summaries that a general reader can follow.
-It does this by generating two independent summaries of every article: one from the PMC full text and one from the PubMed abstract, and grounding every claim in a specific, traceable piece of the source. The full-text summarizer cites individual paragraphs; the abstract summarizer cites individual sentences. Each summary is then scored across 6 metrics that measure their  readability and accuracy. The result is a set of CSVs containing the summaries, the readability scores, and a full audit trail showing which parts of the paper the model actually drew on.
+It does this by generating two independent summaries of every article: one from the PMC full text and one from the PubMed abstract, and grounding every claim in a specific, traceable piece of the source. The full-text summarizer cites individual paragraphs; the abstract summarizer cites individual sentences. Each summary is then scored across 6 metrics that measure readability and accuracy. The result is a set of CSVs containing the summaries, the readability scores, and a full audit trail showing which parts of the paper the model actually drew on.
 
-## Key features:
-1.  Load config and API keys.
-2.  Load PMIDs from pmid_file, or fall back to a PubMed keyword search.
-3.  Print article info (title, authors, journal).
-4.  Fetch full text; keep only articles with full text and truncate to num_of_articles.
-5.  Build paragraph-level citation evidence tables from PMC XML.
-6.  Generate citation-aware full-text summaries.
-7.  Strip citations to create metric-ready full-text summaries.
-8.  Fetch abstracts and build sentence-level evidence tables.
-9.  Generate citation-aware abstract summaries.
+## Key features
+
+1. Load configuration and API keys.
+2. Load PMIDs from `pmid_file`, or fall back to a PubMed keyword search.
+3. Print article info (title, authors, journal).
+4. Fetch full text; keep only articles with full text and truncate to `num_of_articles`.
+5. Build paragraph-level citation evidence tables from PMC XML.
+6. Generate citation-aware full-text summaries.
+7. Strip citations to create metric-ready full-text summaries.
+8. Fetch abstracts and build sentence-level evidence tables.
+9. Generate citation-aware abstract summaries.
 10. Strip citations to create metric-ready abstract summaries.
 11. Compute similarity, readability (Flesch, SMOG, Gunning Fog), and RAGAS scores.
 12. Merge into the final CSV and write the two evidence source tables.
 
-
 ## Citation workflow
 
-The source is split into citable units — paragraphs for full text, sentences for abstracts — each given a sequential ID (`E1`, `E2`, …) and a readable label (`Results, para. 2`). The model sees only the IDs and marks claims with `[E4]`. Python resolves those markers afterwards by lookup against the table.
+The source is split into citable units—paragraphs for full text and sentences for abstracts—each given a sequential ID (`E1`, `E2`, …) and a readable label (`Results, para. 2`). The model sees only the IDs and marks claims with `[E4]`. Python resolves those markers afterwards by lookup against the table.
 
 Because the model can only emit an ID that either exists or doesn't, an invented citation fails the lookup: it is dropped from the text and recorded in `invalid_evidence_ids`. Fabrication degrades to no citation rather than to a plausible wrong one.
 
@@ -30,99 +30,97 @@ Citations are stripped before metrics are computed, and a `used_in_summary` flag
 
 ### Prerequisites
 
-- Python 3.8+
-- An OpenAI API key (set as the `OPENAI_API_KEY` environment variable or in a `.env` file). We suggest using [shell-secrets](https://github.com/waj/shell-secrets) to encrypt your environment variables
-- A registered Entrez Email and API key (set within "config.json"). For more info: [How do I obtain an API Key through an NCBI account?](https://support.nlm.nih.gov/kbArticle/?pn=KA-05317)
-- A `config.json` file with summarization settings (see below for example)
+- Python 3.13 or newer
+- [uv](https://docs.astral.sh/uv/)
+- An OpenAI API key
+- A registered Entrez email and API key. For more info, see [How do I obtain an API Key through an NCBI account?](https://support.nlm.nih.gov/kbArticle/?pn=KA-05317)
+- A local `config.json` file with the pipeline settings
 
 ### Installation
 
-Install required packages:
+From the project directory, install the project dependencies:
 
 ```sh
-pip install -r requirements.txt
+uv sync
 ```
 
 ### Configuration
 
-Edit the `config.json` file to set the number of articles to be queried from PubMed, your Entrez API details, search keyword etc. *Include key "pmid_file" only if you have a defined list of PMIDs you would like to summarize.* Example:
+Create local configuration files from the provided templates:
+
+```sh
+cp .env.example .env
+cp config.example.json config.json
+```
+
+Set your OpenAI API key in `.env`:
+
+```sh
+OPENAI_API_KEY=your_openai_api_key
+```
+
+Edit `config.json` to set your Entrez email and API key, the number of articles to be queried from PubMed, summary lengths, output directory, and search keyword. `config.example.json` provides a starting point. Include the `pmid_file` key only if you have a defined list of PMIDs you would like to summarize.
+
+For keyword search, configure a query in `config.json`:
 
 ```json
 {
+  "entrez_email": "your_email@example.com",
+  "entrez_api_key": "YOUR_NCBI_API_KEY",
   "num_of_articles": 10,
   "max_summary_length": 350,
   "min_summary_length": 250,
-  "entrez_email": "your_email@example.com",
-  "entrez_api_key": "YOUR_NCBI_API_KEY",
-  "output_directory":"./output",
+  "output_directory": "./output",
   "queries": [
     {
       "keyword": "renal cancer",
       "output_file": "renal_cancer.csv"
     }
-  ],
-  "pmid_file": "pmids_to_summarize.txt"
+  ]
 }
 ```
+
+Keep `.env` and `config.json` private; do not commit real credentials. The command-line pipeline loads the OpenAI key from the environment or `.env`, and reads the Entrez details from `config.json`.
 
 ### Usage
 
-1. **Set your OpenAI API key**  
-   Create a `.env` file and enter:
-   ```sh
-   OPENAI_API_KEY=sk-...
+1. **Run the program**
+
+   From the project directory, run:
+
+   ```bash
+   uv run python run_pipeline.py
    ```
 
-2. **Switching from Keyword Search to Manual PMID Input**
+2. **Switch from keyword search to manual PMID input**
 
-    Create a new text file in your project folder (e.g., pmids_to_summarize.txt). Add one PubMed ID (PMID) per line:
+   Create a text file in the project folder (for example, `pmids_to_summarize.txt`) and add one PubMed ID (PMID) per line. Add this setting to `config.json`:
 
-```json
-{
-  "num_of_articles": 10,
-  "max_summary_length": 350,
-  "min_summary_length": 250,
-  "entrez_email": "your_email@example.com",
-  "entrez_api_key": "YOUR_NCBI_API_KEY",
-  "output_directory":"./output",
-  "pmid_file":"FILE'S DIRECTORY"
-  "queries": [
-    {
-      "keyword": "renal cancer",
-      "output_file": "renal_cancer.csv"
-    }
-  ],
-  "pmid_file": "pmids_to_summarize.txt"
-}
-```
-    Start the script. The summarizer will automatically process only the PMIDs listed in your text file, bypassing keyword search.
+   ```json
+   "pmid_file": "pmids_to_summarize.txt"
+   ```
 
-3. **Run the program**  
-    Click on top right corner "Run Python File" or 
-    ```bash
-    uv run python run_pipeline.py
-    ```
+   When the file contains PMIDs, the pipeline processes those IDs instead of running the keyword query. If the file is missing or empty, it falls back to the configured keyword search.
 
-4. **Outputs**  
-   - Summaries and metrics are saved in the `output/` directory as CSV files.
-   - You can adjust keywords, number of articles, and other settings in `config.json`.
+3. **Outputs**
 
+   Summaries and metrics are saved in the configured output directory (by default, `output/`) as timestamped CSV files. The full-text citation and abstract sentence evidence tables are also saved when evidence is available.
 
+### Streamlit interface usage
 
-### Streamlit interface Usage
-
-Launch the interface from the terminal:
+Launch the interface from the project directory:
 
 ```bash
 uv run streamlit run app_interface.py
 ```
 
-Streamlit will open the interface in your default browser.
+Streamlit will open the interface in your default browser. It supports PubMed keyword search and manual PMID input. The interface also shows a PDF upload option, but the current pipeline does not yet process uploaded PDFs.
+
+When you submit the form, the current app writes the submitted settings—including Entrez credentials—to `streamlit_config.json` and passes that file to the pipeline. You do not need to create this file manually. Do not share or commit it.
 
 ### Static site export
 
-The summarizer must be run through the Streamlit interface first — this writes the
-frozen summary data to `frozen_results/` inside the output directory.
+The summarizer must be run through the Streamlit interface first—this writes the frozen summary data to `output/frozen_results/`.
 
 Once that data exists, build the site:
 
@@ -130,8 +128,6 @@ Once that data exists, build the site:
 uv run python build_static_site-2.py
 ```
 
-This generates a set of HTML files in `site/`, also within the output directory. Deploy
-that folder to Netlify (or any static host).
----
+This generates a set of HTML files in `output/site/`. Open `output/site/index.html` locally or deploy that folder to Netlify (or any static host).
 
 
