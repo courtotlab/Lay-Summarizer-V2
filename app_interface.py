@@ -12,8 +12,8 @@ import streamlit.components.v1 as components
 #get entrez email and api key from config.json
 with open("config.json") as f:
     config = json.load(f)
-    DEFAULT_ENTREZ_EMAIL = config.get("entrez_email", "")
-    DEFAULT_ENTREZ_API_KEY = config.get("entrez_api_key", "")
+    ENTREZ_EMAIL = config.get("entrez_email", "")
+    ENTREZ_API_KEY = config.get("entrez_api_key", "")
 # ------------------------------------------------------------
 # 1. Make sure Streamlit can import your backend from src/
 # ------------------------------------------------------------
@@ -240,8 +240,8 @@ with st.form("pipeline_form"):
             step=10
         )
 
-    entrez_email = st.text_input("Entrez email", value=DEFAULT_ENTREZ_EMAIL)
-    entrez_api_key = st.text_input("Entrez API key", value=DEFAULT_ENTREZ_API_KEY, type="password")
+    entrez_email = st.text_input("Entrez email", value=ENTREZ_EMAIL)
+    entrez_api_key = st.text_input("Entrez API key", value=ENTREZ_API_KEY, type="password")
 
     submitted = st.form_submit_button("Run summarizer")
 
